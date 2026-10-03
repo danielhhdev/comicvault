@@ -58,8 +58,7 @@ CLAUDE.md                 instrucciones del proyecto
   settings.json           permisos y hooks (compartido con el equipo)
   rules/                  reglas modulares (algunas limitadas por rutas)
   agents/                 subagentes: code-reviewer, test-writer, spring-architect
-  skills/                 crear-endpoint, crear-migracion
-  commands/               /nueva-feature, /revisar-cambios
+  skills/                 crear-endpoint, crear-migracion, commit, nueva-feature, revisar-cambios
   hooks/                  scripts: bloqueo, protección, formato, tests, contexto, notificación
 scripts/                  review.sh (headless) y worktree.sh (sesiones en paralelo)
 .github/workflows/        ci.yml y claude.yml (revisión de PRs y @claude)

@@ -1,6 +1,8 @@
 ---
+name: nueva-feature
 description: Planifica e implementa una funcionalidad nueva en cortes verticales
 argument-hint: <descripción de la funcionalidad>
+disable-model-invocation: true
 ---
 
 Quiero implementar esta funcionalidad: $ARGUMENTS
