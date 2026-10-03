@@ -30,3 +30,16 @@ Sigue este proceso:
    si después siguen quedando bloqueantes, para y pregúntame.
 5. **Cierre**: resume lo hecho, los endpoints creados, los commits y el resultado final de
    `mvn test`. No hagas push ni abras el PR: eso lo decido yo.
+6. **Mini-resumen de piezas de Claude Code**: al terminar la fase, añade una tabla corta para
+   ver qué se usó, cuándo y cómo. Solo lo que se usó de verdad en esta fase, sin rellenar:
+
+   | Pieza | Qué | Detalle |
+   |---|---|---|
+   | Agentes | nombre y modelo (el `model:` de `.claude/agents/<nombre>.md`) | en qué paso y para qué |
+   | Skills | `crear-migracion`, `crear-endpoint`, `commit`... | en qué paso |
+   | Hooks | script y evento (`PostToolUse`, `PreToolUse`, `Stop`...) | qué hizo (formatear, bloquear, avisar) |
+
+   Para los hooks cita solo los que hayas visto actuar (salida de formato, avisos o bloqueos
+   que aparecen en la conversación). Los que corren en silencio no dejan rastro: agrúpalos en
+   una línea como "configurados, sin salida visible" en vez de afirmar que se ejecutaron.
+   Indica también el modelo de la sesión principal.
