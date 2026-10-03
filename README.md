@@ -22,14 +22,10 @@ hooks y automatización) para que puedas practicarlas sobre una app real.
 cd comicvault
 git init -b main && git add . && git commit -m "chore: esqueleto inicial"
 
-mvn verify               # IMPORTANTE: primera comprobación, ver nota más abajo
+mvn verify               # compila, pasa los tests (H2) y empaqueta
 mvn spring-boot:run      # arranca PostgreSQL con compose.yaml y la API en :8080
 curl localhost:8080/actuator/health
 ```
-
-> **Nota:** el esqueleto se generó sin acceso a Maven Central, así que no se ha podido compilar
-> antes de entregarlo. Si `mvn verify` falla por alguna versión o dependencia, es un buen primer
-> ejercicio: abre `claude`, pega el error y deja que lo arregle.
 
 ## Empezar con Claude Code
 
