@@ -25,7 +25,7 @@ con mayúscula, singular en minúscula y plural en minúscula) y adapta los camp
 4. **Controlador** (`<recurso>/__Recurso__Controller.java`): ruta `/api/v1/__recursos__`,
    devuelve DTOs y los códigos de estado de la regla de API (`201` con `Location`, `204`...).
 5. **Tests**: un test unitario del servicio y un `@WebMvcTest` del controlador (usa la plantilla
-   `templates/ControllerTest.java.tpl`). Copia los imports de un test existente.
+   `templates/ControllerTest.java.tpl`). Los imports de Spring Boot 4 (`org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest`, `org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest`) ya están en la plantilla.
 6. Ejecuta `mvn spotless:apply` y `mvn test`. No termines con los tests en rojo.
 
 ## Entrega

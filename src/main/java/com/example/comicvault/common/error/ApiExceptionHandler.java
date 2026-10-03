@@ -19,4 +19,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     problem.setTitle("Recurso no encontrado");
     return problem;
   }
+
+  @ExceptionHandler(ConflictException.class)
+  ProblemDetail handleConflict(ConflictException ex) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    problem.setTitle("Conflicto");
+    return problem;
+  }
 }
