@@ -3,7 +3,7 @@ spring:
     name: comicvault
   datasource:
     # Valores de desarrollo local (coinciden con compose.yaml). En producción: variables de entorno.
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/comicvault}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/comicvault}
     username: ${DB_USER:comicvault}
     password: ${DB_PASSWORD:comicvault}
   data:

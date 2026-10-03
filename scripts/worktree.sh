@@ -27,5 +27,5 @@ Siguiente paso:
   cd "$DIR" && claude
 
 Nota: cada worktree arranca su propia base de datos de tests (H2 en memoria), pero si usas
-PostgreSQL en local comparten el mismo contenedor y el mismo puerto 5432.
+PostgreSQL en local comparten el mismo contenedor y el mismo puerto 5433.
 EOF

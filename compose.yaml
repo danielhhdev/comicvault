@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: comicvault
       POSTGRES_PASSWORD: comicvault
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - comicvault-data:/var/lib/postgresql/data
     healthcheck:
