@@ -26,13 +26,19 @@ mvn spotless:check               # comprobar formato (lo hace el CI)
 
 ## Arquitectura
 
-Paquetes por funcionalidad (no por capa técnica), bajo `com.example.comicvault`:
+Paquetes por capa técnica, bajo `com.example.comicvault`, con una clase por recurso en cada capa
+(`PublisherController`, `PublisherService`, `PublisherRepository`, `Publisher`...):
 
 ```
-comic/      controller, service, repository, entity, dto   (una carpeta por funcionalidad)
-series/     idem
-common/     código compartido (errores, configuración)
+controller/   controladores REST
+service/      reglas de negocio y transacciones
+repository/   Spring Data JPA
+entity/       entidades JPA
+dto/          records de entrada y salida de la API
+common/       código compartido (errores, configuración)
 ```
+
+Los tests replican esta estructura en `src/test/java` (mismo paquete que la clase probada).
 
 Flujo: `Controller → Service → Repository`. Los controladores nunca tocan repositorios y
 las entidades JPA nunca salen de la capa de servicio (se exponen DTOs).

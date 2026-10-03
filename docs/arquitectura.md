@@ -12,6 +12,27 @@
 
 Relaciones: una editorial tiene muchas series; una serie tiene muchos tomos.
 
+## Estructura de paquetes
+
+Organización por capa técnica, directamente bajo `com.example.comicvault`. Cada recurso aporta
+una clase a cada capa, con el nombre del recurso como prefijo:
+
+```
+controller/   PublisherController, SeriesController, ComicController
+service/      PublisherService, ...
+repository/   PublisherRepository, ...
+entity/       Publisher, Series, Comic (y sus enums)
+dto/          CreatePublisherRequest, UpdatePublisherRequest, PublisherResponse, ...
+common/       error/ (ApiExceptionHandler, NotFoundException, ConflictException)
+```
+
+Visibilidad: los controladores son `package-private` (solo los usa Spring MVC). Servicios,
+repositorios, entidades y DTOs son `public` porque se usan entre paquetes, pero las entidades
+no las usa ningún controlador: solo salen del servicio como DTOs.
+
+Los tests viven en el mismo paquete que la clase que prueban (`controller/PublisherControllerTest`,
+`service/PublisherServiceTest`, `repository/PublisherRepositoryTest`).
+
 ## Capas
 
 - **controller**: HTTP, validación de entrada y códigos de estado. Sin lógica de negocio.

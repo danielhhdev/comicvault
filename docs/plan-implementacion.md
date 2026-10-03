@@ -37,7 +37,8 @@ Salida: `mvn verify` en verde. Sin él no se empieza la Fase 1.
 Rama `feature/publishers`. Es el recurso más simple y fija el patrón para los demás.
 
 - Migración `V1__create_publishers_table.sql` (`id`, `name` único, `country`, `created_at`).
-- `publisher/entity/Publisher`, `PublisherRepository`, `PublisherService`, `PublisherController`.
+- `entity/Publisher`, `repository/PublisherRepository`, `service/PublisherService`,
+  `controller/PublisherController` (estructura por capas, ver `docs/arquitectura.md`).
 - DTOs: `CreatePublisherRequest`, `UpdatePublisherRequest`, `PublisherResponse`.
 - Endpoints bajo `/api/v1/publishers`: `GET` paginado, `GET /{id}`, `POST` (201 + `Location`),
   `PUT /{id}`, `DELETE /{id}` (204).
@@ -52,7 +53,7 @@ Reutiliza `NotFoundException`, `ConflictException` y `ApiExceptionHandler` de
 
 Rama `feature/series`.
 
-- Migración `V2__create_series_table.sql` (`title`, `publisher_id` FK, `status`,
+- Migración `V3__create_series_table.sql` (`title`, `publisher_id` FK, `status`,
   `total_volumes`, `created_at`).
 - Entidad `Series` con `@ManyToOne(LAZY)` a `Publisher` y enum `SeriesStatus`
   (`ONGOING`, `FINISHED`, `CANCELLED`).
@@ -66,7 +67,7 @@ Rama `feature/series`.
 
 Rama `feature/comics`.
 
-- Migración `V3__create_comics_table.sql` (`series_id` FK, `volume_number`, `title`, `isbn`,
+- Migración `V4__create_comics_table.sql` (`series_id` FK, `volume_number`, `title`, `isbn`,
   `release_date`, `reading_status`, `rating`, `acquired_at`, `created_at`).
   Restricción única `(series_id, volume_number)`; `isbn` único si no es nulo.
 - Entidad `Comic` y enum `ReadingStatus` (`WISHLIST`, `UNREAD`, `READING`, `READ`).
