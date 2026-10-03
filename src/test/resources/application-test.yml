@@ -1,0 +1,11 @@
+# Perfil "test": H2 en modo PostgreSQL, sin Docker. Lo activa surefire (ver pom.xml).
+# Las migraciones Flyway deben ser SQL portable entre PostgreSQL y H2.
+spring:
+  datasource:
+    url: jdbc:h2:mem:comicvault;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  docker:
+    compose:
+      enabled: false

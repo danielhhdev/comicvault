@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: comicvault
+  datasource:
+    # Valores de desarrollo local (coinciden con compose.yaml). En producción: variables de entorno.
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/comicvault}
+    username: ${DB_USER:comicvault}
+    password: ${DB_PASSWORD:comicvault}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate # el esquema lo gestiona Flyway, nunca Hibernate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

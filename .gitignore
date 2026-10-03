@@ -1,0 +1,23 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Secretos y configuración local
+.env
+.env.*
+*.pem
+
+# Claude Code: lo personal no se versiona
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Salidas de scripts
+docs/reviews/
+.claude/worktrees/

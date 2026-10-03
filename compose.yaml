@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: comicvault-db
+    environment:
+      POSTGRES_DB: comicvault
+      POSTGRES_USER: comicvault
+      POSTGRES_PASSWORD: comicvault
+    ports:
+      - "5432:5432"
+    volumes:
+      - comicvault-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U comicvault -d comicvault"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  comicvault-data:
