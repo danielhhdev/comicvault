@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +32,7 @@ class PublisherServiceTest {
   @Test
   void creaLaEditorialYDevuelveSuRespuesta() {
     given(repository.existsByName("Panini")).willReturn(false);
-    given(repository.save(any(Publisher.class)))
+    given(repository.saveAndFlush(any(Publisher.class)))
         .willAnswer(
             invocation -> {
               Publisher saved = invocation.getArgument(0);
@@ -107,6 +109,27 @@ class PublisherServiceTest {
 
     assertThatThrownBy(() -> service.delete(99L)).isInstanceOf(NotFoundException.class);
     verify(repository, never()).delete(any());
+  }
+
+  @Test
+  void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlCrear() {
+    given(repository.existsByName("Panini")).willReturn(false);
+    given(repository.saveAndFlush(any(Publisher.class)))
+        .willThrow(new DataIntegrityViolationException("uk_publishers_name"));
+
+    assertThatThrownBy(() -> service.create(new CreatePublisherRequest("Panini", "Italia")))
+        .isInstanceOf(ConflictException.class)
+        .hasMessageContaining("Panini");
+  }
+
+  @Test
+  void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlActualizar() {
+    given(repository.findById(1L)).willReturn(Optional.of(existing(1L, "Norma", "España")));
+    given(repository.existsByNameAndIdNot("ECC", 1L)).willReturn(false);
+    willThrow(new DataIntegrityViolationException("uk_publishers_name")).given(repository).flush();
+
+    assertThatThrownBy(() -> service.update(1L, new UpdatePublisherRequest("ECC", "España")))
+        .isInstanceOf(ConflictException.class);
   }
 
   private Publisher existing(Long id, String name, String country) {

@@ -5,6 +5,7 @@ import com.example.comicvault.common.error.NotFoundException;
 import com.example.comicvault.publisher.dto.CreatePublisherRequest;
 import com.example.comicvault.publisher.dto.PublisherResponse;
 import com.example.comicvault.publisher.dto.UpdatePublisherRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,12 @@ class PublisherService {
     if (repository.existsByName(request.name())) {
       throw nameInUse(request.name());
     }
-    return toResponse(repository.save(new Publisher(request.name(), request.country())));
+    try {
+      return toResponse(repository.saveAndFlush(new Publisher(request.name(), request.country())));
+    } catch (DataIntegrityViolationException ex) {
+      // Dos peticiones concurrentes pueden pasar existsByName; la restricción única decide.
+      throw nameInUse(request.name());
+    }
   }
 
   @Transactional
@@ -47,6 +53,11 @@ class PublisherService {
     }
     publisher.setName(request.name());
     publisher.setCountry(request.country());
+    try {
+      repository.flush();
+    } catch (DataIntegrityViolationException ex) {
+      throw nameInUse(request.name());
+    }
     return toResponse(publisher);
   }
 

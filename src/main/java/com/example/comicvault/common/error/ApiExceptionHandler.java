@@ -1,5 +1,6 @@
 package com.example.comicvault.common.error;
 
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   ProblemDetail handleConflict(ConflictException ex) {
     ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     problem.setTitle("Conflicto");
+    return problem;
+  }
+
+  @ExceptionHandler(PropertyReferenceException.class)
+  ProblemDetail handleInvalidSort(PropertyReferenceException ex) {
+    ProblemDetail problem =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, "No se puede ordenar por '%s'".formatted(ex.getPropertyName()));
+    problem.setTitle("Parámetro de ordenación no válido");
     return problem;
   }
 }

@@ -1,10 +1,15 @@
 package com.example.comicvault.publisher;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.core.PropertyReferenceException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @DataJpaTest
 class PublisherRepositoryTest {
@@ -37,5 +42,19 @@ class PublisherRepositoryTest {
 
     assertThat(repository.existsByNameAndIdNot("Norma", norma.getId())).isFalse();
     assertThat(repository.existsByNameAndIdNot("Norma", ecc.getId())).isTrue();
+  }
+
+  @Test
+  void laRestriccionUnicaRechazaUnNombreDuplicado() {
+    repository.saveAndFlush(new Publisher("Norma", "España"));
+
+    assertThatThrownBy(() -> repository.saveAndFlush(new Publisher("Norma", "Francia")))
+        .isInstanceOf(DataIntegrityViolationException.class);
+  }
+
+  @Test
+  void ordenarPorUnaPropiedadInexistenteLanzaPropertyReferenceException() {
+    assertThatThrownBy(() -> repository.findAll(PageRequest.of(0, 10, Sort.by("foo"))))
+        .isInstanceOf(PropertyReferenceException.class);
   }
 }
