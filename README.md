@@ -45,10 +45,7 @@ Dentro de la sesión, comprueba que todo se ha cargado:
 | `/agents` | `code-reviewer`, `test-writer`, `spring-architect` |
 | `/hooks` | los hooks de `.claude/settings.json` |
 | `/permissions` | las reglas allow/deny |
-| `/help` | los comandos `/nueva-feature` y `/revisar-cambios`; las skills `crear-endpoint` y `crear-migracion` |
-
-Después abre `docs/primera-implementacion.md` y sigue el prompt de la primera funcionalidad.
-El plan completo de aprendizaje está en `docs/ROADMAP.md`.
+| `/help` | las skills `/nueva-feature`, `/revisar-cambios`, `/commit`, `/crear-endpoint` y `/crear-migracion` |
 
 ## Estructura
 
@@ -62,7 +59,7 @@ CLAUDE.md                 instrucciones del proyecto
   hooks/                  scripts: bloqueo, protección, formato, tests, contexto, notificación
 scripts/                  review.sh (headless) y worktree.sh (sesiones en paralelo)
 .github/workflows/        ci.yml y claude.yml (revisión de PRs y @claude)
-docs/                     arquitectura, roadmap, notas y primera implementación
+docs/                     arquitectura y notas
 src/                      código de la aplicación
 ```
 

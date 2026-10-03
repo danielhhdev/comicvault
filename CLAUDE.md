@@ -67,4 +67,4 @@ las entidades JPA nunca salen de la capa de servicio (se exponen DTOs).
 
 - Rules: `.claude/rules/` · Agentes: `.claude/agents/` · Skills: `.claude/skills/`
 - Hooks: `.claude/hooks/` (configurados en `.claude/settings.json`)
-- Plan de aprendizaje: `docs/ROADMAP.md` · Diario de aprendizaje: `docs/NOTAS.md`
+- Diario de aprendizaje: `docs/NOTAS.md`
