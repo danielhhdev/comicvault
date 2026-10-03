@@ -36,7 +36,7 @@ public class PublisherService {
 
   @Transactional
   public PublisherResponse create(CreatePublisherRequest request) {
-    if (repository.existsByName(request.name())) {
+    if (repository.existsByNameIgnoreCase(request.name())) {
       throw nameInUse(request.name());
     }
     try {
@@ -50,7 +50,7 @@ public class PublisherService {
   @Transactional
   public PublisherResponse update(Long id, UpdatePublisherRequest request) {
     Publisher publisher = find(id);
-    if (repository.existsByNameAndIdNot(request.name(), id)) {
+    if (repository.existsByNameIgnoreCaseAndIdNot(request.name(), id)) {
       throw nameInUse(request.name());
     }
     publisher.setName(request.name());

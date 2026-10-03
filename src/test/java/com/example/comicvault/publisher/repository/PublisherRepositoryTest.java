@@ -32,8 +32,8 @@ class PublisherRepositoryTest {
   void existsByNameDetectaUnNombreYaUsado() {
     repository.saveAndFlush(new Publisher("Norma", "España"));
 
-    assertThat(repository.existsByName("Norma")).isTrue();
-    assertThat(repository.existsByName("Planeta")).isFalse();
+    assertThat(repository.existsByNameIgnoreCase("Norma")).isTrue();
+    assertThat(repository.existsByNameIgnoreCase("Planeta")).isFalse();
   }
 
   @Test
@@ -41,8 +41,8 @@ class PublisherRepositoryTest {
     Publisher norma = repository.saveAndFlush(new Publisher("Norma", "España"));
     Publisher ecc = repository.saveAndFlush(new Publisher("ECC", "España"));
 
-    assertThat(repository.existsByNameAndIdNot("Norma", norma.getId())).isFalse();
-    assertThat(repository.existsByNameAndIdNot("Norma", ecc.getId())).isTrue();
+    assertThat(repository.existsByNameIgnoreCaseAndIdNot("Norma", norma.getId())).isFalse();
+    assertThat(repository.existsByNameIgnoreCaseAndIdNot("Norma", ecc.getId())).isTrue();
   }
 
   @Test
@@ -57,5 +57,32 @@ class PublisherRepositoryTest {
   void ordenarPorUnaPropiedadInexistenteLanzaPropertyReferenceException() {
     assertThatThrownBy(() -> repository.findAll(PageRequest.of(0, 10, Sort.by("foo"))))
         .isInstanceOf(PropertyReferenceException.class);
+  }
+
+  @Test
+  void existsByNameIgnoreCaseIgnoraMayusculasYMinusculas() {
+    repository.saveAndFlush(new Publisher("Panini", "Italia"));
+
+    assertThat(repository.existsByNameIgnoreCase("panini")).isTrue();
+    assertThat(repository.existsByNameIgnoreCase("PANINI")).isTrue();
+  }
+
+  @Test
+  void laRestriccionUnicaRechazaUnNombreQueSoloCambiaEnMayusculas() {
+    repository.saveAndFlush(new Publisher("Panini", "Italia"));
+
+    assertThatThrownBy(() -> repository.saveAndFlush(new Publisher("pAnInI", "Italia")))
+        .isInstanceOf(DataIntegrityViolationException.class);
+  }
+
+  @Test
+  void renombrarAUnNombreQueSoloCambiaEnMayusculasViolaLaRestriccionUnica() {
+    repository.saveAndFlush(new Publisher("Panini", "Italia"));
+    Publisher norma = repository.saveAndFlush(new Publisher("Norma", "España"));
+
+    norma.setName("PANINI");
+
+    assertThatThrownBy(() -> repository.flush())
+        .isInstanceOf(DataIntegrityViolationException.class);
   }
 }

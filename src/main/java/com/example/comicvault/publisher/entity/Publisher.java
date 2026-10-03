@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,9 @@ public class Publisher {
   @Column(nullable = false, length = 120)
   private String name;
 
+  @Column(name = "name_key", nullable = false, length = 120)
+  private String nameKey;
+
   @Column(length = 60)
   private String country;
 
@@ -30,7 +34,7 @@ public class Publisher {
   protected Publisher() {}
 
   public Publisher(String name, String country) {
-    this.name = name;
+    setName(name);
     this.country = country;
   }
 
@@ -49,6 +53,8 @@ public class Publisher {
 
   public void setName(String name) {
     this.name = name;
+    // Clave en minúsculas: la restricción única de la BD ignora mayúsculas y minúsculas.
+    this.nameKey = name.toLowerCase(Locale.ROOT);
   }
 
   public String getCountry() {

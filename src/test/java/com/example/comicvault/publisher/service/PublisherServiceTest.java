@@ -33,7 +33,7 @@ class PublisherServiceTest {
 
   @Test
   void creaLaEditorialYDevuelveSuRespuesta() {
-    given(repository.existsByName("Panini")).willReturn(false);
+    given(repository.existsByNameIgnoreCase("Panini")).willReturn(false);
     given(repository.saveAndFlush(any(Publisher.class)))
         .willAnswer(
             invocation -> {
@@ -49,12 +49,21 @@ class PublisherServiceTest {
 
   @Test
   void lanzaConflictoAlCrearConUnNombreRepetido() {
-    given(repository.existsByName("Panini")).willReturn(true);
+    given(repository.existsByNameIgnoreCase("Panini")).willReturn(true);
 
     assertThatThrownBy(() -> service.create(new CreatePublisherRequest("Panini", "Italia")))
         .isInstanceOf(ConflictException.class)
         .hasMessageContaining("Panini");
     verify(repository, never()).save(any());
+  }
+
+  @Test
+  void lanzaConflictoAlCrearConUnNombreQueSoloDifiereEnMayusculas() {
+    given(repository.existsByNameIgnoreCase("panini")).willReturn(true);
+
+    assertThatThrownBy(() -> service.create(new CreatePublisherRequest("panini", "Italia")))
+        .isInstanceOf(ConflictException.class);
+    verify(repository, never()).saveAndFlush(any());
   }
 
   @Test
@@ -70,7 +79,7 @@ class PublisherServiceTest {
   void actualizaLosCamposDeLaEditorial() {
     Publisher publisher = existing(1L, "Norma", "España");
     given(repository.findById(1L)).willReturn(Optional.of(publisher));
-    given(repository.existsByNameAndIdNot("Norma Editorial", 1L)).willReturn(false);
+    given(repository.existsByNameIgnoreCaseAndIdNot("Norma Editorial", 1L)).willReturn(false);
 
     PublisherResponse response =
         service.update(1L, new UpdatePublisherRequest("Norma Editorial", "Francia"));
@@ -81,7 +90,7 @@ class PublisherServiceTest {
   @Test
   void lanzaConflictoAlActualizarConElNombreDeOtraEditorial() {
     given(repository.findById(1L)).willReturn(Optional.of(existing(1L, "Norma", "España")));
-    given(repository.existsByNameAndIdNot("ECC", 1L)).willReturn(true);
+    given(repository.existsByNameIgnoreCaseAndIdNot("ECC", 1L)).willReturn(true);
 
     assertThatThrownBy(() -> service.update(1L, new UpdatePublisherRequest("ECC", "España")))
         .isInstanceOf(ConflictException.class);
@@ -115,7 +124,7 @@ class PublisherServiceTest {
 
   @Test
   void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlCrear() {
-    given(repository.existsByName("Panini")).willReturn(false);
+    given(repository.existsByNameIgnoreCase("Panini")).willReturn(false);
     given(repository.saveAndFlush(any(Publisher.class)))
         .willThrow(new DataIntegrityViolationException("uk_publishers_name"));
 
@@ -127,7 +136,7 @@ class PublisherServiceTest {
   @Test
   void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlActualizar() {
     given(repository.findById(1L)).willReturn(Optional.of(existing(1L, "Norma", "España")));
-    given(repository.existsByNameAndIdNot("ECC", 1L)).willReturn(false);
+    given(repository.existsByNameIgnoreCaseAndIdNot("ECC", 1L)).willReturn(false);
     willThrow(new DataIntegrityViolationException("uk_publishers_name")).given(repository).flush();
 
     assertThatThrownBy(() -> service.update(1L, new UpdatePublisherRequest("ECC", "España")))
