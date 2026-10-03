@@ -3,7 +3,7 @@
 Punto de retoma del proyecto: lee esto primero y no hace falta revisar el código para saber
 por dónde seguir. El detalle de cada fase está en `docs/plan-implementacion.md`.
 
-**Última actualización:** 2026-10-03 · `main` en `5d6432f`
+**Última actualización:** 2026-10-03
 
 ## Dónde estamos
 
