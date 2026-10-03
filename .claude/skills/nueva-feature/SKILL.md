@@ -30,7 +30,10 @@ Sigue este proceso:
    si después siguen quedando bloqueantes, para y pregúntame.
 5. **Cierre**: resume lo hecho, los endpoints creados, los commits y el resultado final de
    `mvn test`. No hagas push ni abras el PR: eso lo decido yo.
-6. **Mini-resumen de piezas de Claude Code**: al terminar la fase, añade una tabla corta para
+6. **Estado de fases**: actualiza `docs/estado-fases.md` (fase hecha, siguiente paso, lo aprendido
+   para la próxima y decisiones abiertas) y commitéalo como `docs:`. Es lo que lee la próxima
+   sesión para saber por dónde seguir.
+7. **Mini-resumen de piezas de Claude Code**: al terminar la fase, añade una tabla corta para
    ver qué se usó, cuándo y cómo. Solo lo que se usó de verdad en esta fase, sin rellenar:
 
    | Pieza | Qué | Detalle |

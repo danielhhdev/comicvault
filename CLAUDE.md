@@ -45,6 +45,13 @@ las entidades JPA nunca salen de la capa de servicio (se exponen DTOs).
 
 @docs/arquitectura.md
 
+## Estado del proyecto
+
+Al empezar una sesión, lee el estado de las fases para saber por dónde seguir sin recorrer el
+código. Al cerrar una fase, actualízalo (lo hace el paso final de `nueva-feature`).
+
+@docs/estado-fases.md
+
 ## Convenciones clave (el detalle está en `.claude/rules/`)
 
 - DTOs como `record`. Sin Lombok. Inyección por constructor.
