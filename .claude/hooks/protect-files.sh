@@ -4,7 +4,10 @@
 #  - Migraciones Flyway que ya están en git (son inmutables).
 set -uo pipefail
 
-command -v jq >/dev/null 2>&1 || exit 0
+if ! command -v jq >/dev/null 2>&1; then
+  echo "AVISO: jq no está instalado; protect-files.sh NO está protegiendo nada." >&2
+  exit 0
+fi
 
 file="$(jq -r '.tool_input.file_path // empty')"
 [[ -z "$file" ]] && exit 0

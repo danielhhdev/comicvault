@@ -12,7 +12,7 @@ file="$(jq -r '.tool_input.file_path // empty')"
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
-if ! out="$(mvn -q spotless:apply "-DspotlessFiles=$(printf '%s' "$file" | sed 's/[.[\*^$()+?{|]/\\&/g')" 2>&1)"; then
+if ! out="$(mvn -q spotless:apply "-DspotlessFiles=$(printf '%s' "$file" | sed 's/[^A-Za-z0-9_]/./g')" 2>&1)"; then
   echo "Aviso: spotless:apply falló para $file (no es bloqueante)." >&2
   echo "$out" | tail -n 5 >&2
 fi

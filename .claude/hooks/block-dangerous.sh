@@ -3,7 +3,10 @@
 # Entrada: JSON por stdin. Salida: exit 2 + mensaje en stderr = bloqueo (Claude lo lee).
 set -uo pipefail
 
-command -v jq >/dev/null 2>&1 || exit 0 # sin jq no se puede inspeccionar: no bloquear
+if ! command -v jq >/dev/null 2>&1; then
+  echo "AVISO: jq no está instalado; block-dangerous.sh NO está protegiendo nada." >&2
+  exit 0
+fi
 
 cmd="$(jq -r '.tool_input.command // empty')"
 [[ -z "$cmd" ]] && exit 0
