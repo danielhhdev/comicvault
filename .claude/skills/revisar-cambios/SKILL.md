@@ -2,7 +2,6 @@
 name: revisar-cambios
 description: Revisa los cambios de la rama actual respecto a main con el subagente code-reviewer
 argument-hint: [rama-base]
-disable-model-invocation: true
 allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git branch:*)
 ---
 
