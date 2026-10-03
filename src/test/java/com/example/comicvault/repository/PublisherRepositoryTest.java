@@ -1,9 +1,9 @@
-package com.example.comicvault.publisher.repository;
+package com.example.comicvault.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.comicvault.publisher.entity.Publisher;
+import com.example.comicvault.entity.Publisher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

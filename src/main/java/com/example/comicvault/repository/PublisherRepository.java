@@ -1,6 +1,6 @@
-package com.example.comicvault.publisher.repository;
+package com.example.comicvault.repository;
 
-import com.example.comicvault.publisher.entity.Publisher;
+import com.example.comicvault.entity.Publisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PublisherRepository extends JpaRepository<Publisher, Long> {

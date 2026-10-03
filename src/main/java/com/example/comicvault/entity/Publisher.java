@@ -1,4 +1,4 @@
-package com.example.comicvault.publisher.entity;
+package com.example.comicvault.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

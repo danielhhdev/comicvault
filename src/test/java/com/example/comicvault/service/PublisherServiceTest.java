@@ -1,4 +1,4 @@
-package com.example.comicvault.publisher.service;
+package com.example.comicvault.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,11 +10,11 @@ import static org.mockito.Mockito.verify;
 
 import com.example.comicvault.common.error.ConflictException;
 import com.example.comicvault.common.error.NotFoundException;
-import com.example.comicvault.publisher.dto.CreatePublisherRequest;
-import com.example.comicvault.publisher.dto.PublisherResponse;
-import com.example.comicvault.publisher.dto.UpdatePublisherRequest;
-import com.example.comicvault.publisher.entity.Publisher;
-import com.example.comicvault.publisher.repository.PublisherRepository;
+import com.example.comicvault.dto.CreatePublisherRequest;
+import com.example.comicvault.dto.PublisherResponse;
+import com.example.comicvault.dto.UpdatePublisherRequest;
+import com.example.comicvault.entity.Publisher;
+import com.example.comicvault.repository.PublisherRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
