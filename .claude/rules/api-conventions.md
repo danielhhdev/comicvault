@@ -18,4 +18,5 @@ paths:
 - Actualización parcial con `PATCH`, reemplazo completo con `PUT`.
 - Los errores salen siempre como `ProblemDetail`; no inventes formatos de error propios.
 - Los controladores no contienen lógica de negocio ni acceden a repositorios.
-- Nombres de DTO: `CreateComicRequest`, `UpdateComicRequest`, `ComicResponse`.
+- Nombres de DTO: `CreateComicRequest`, `UpdateComicRequest` (`PUT`), `PatchComicRequest`
+  (`PATCH`, campos opcionales) y `ComicResponse`.
