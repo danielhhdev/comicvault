@@ -1,10 +1,12 @@
-package com.example.comicvault.publisher;
+package com.example.comicvault.publisher.service;
 
 import com.example.comicvault.common.error.ConflictException;
 import com.example.comicvault.common.error.NotFoundException;
 import com.example.comicvault.publisher.dto.CreatePublisherRequest;
 import com.example.comicvault.publisher.dto.PublisherResponse;
 import com.example.comicvault.publisher.dto.UpdatePublisherRequest;
+import com.example.comicvault.publisher.entity.Publisher;
+import com.example.comicvault.publisher.repository.PublisherRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,28 +14,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-class PublisherService {
+public class PublisherService {
 
   private static final String RESOURCE = "Editorial";
 
   private final PublisherRepository repository;
 
-  PublisherService(PublisherRepository repository) {
+  public PublisherService(PublisherRepository repository) {
     this.repository = repository;
   }
 
   @Transactional(readOnly = true)
-  Page<PublisherResponse> list(Pageable pageable) {
+  public Page<PublisherResponse> list(Pageable pageable) {
     return repository.findAll(pageable).map(this::toResponse);
   }
 
   @Transactional(readOnly = true)
-  PublisherResponse get(Long id) {
+  public PublisherResponse get(Long id) {
     return toResponse(find(id));
   }
 
   @Transactional
-  PublisherResponse create(CreatePublisherRequest request) {
+  public PublisherResponse create(CreatePublisherRequest request) {
     if (repository.existsByName(request.name())) {
       throw nameInUse(request.name());
     }
@@ -46,7 +48,7 @@ class PublisherService {
   }
 
   @Transactional
-  PublisherResponse update(Long id, UpdatePublisherRequest request) {
+  public PublisherResponse update(Long id, UpdatePublisherRequest request) {
     Publisher publisher = find(id);
     if (repository.existsByNameAndIdNot(request.name(), id)) {
       throw nameInUse(request.name());
@@ -62,7 +64,7 @@ class PublisherService {
   }
 
   @Transactional
-  void delete(Long id) {
+  public void delete(Long id) {
     repository.delete(find(id));
   }
 

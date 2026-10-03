@@ -1,4 +1,4 @@
-package com.example.comicvault.publisher;
+package com.example.comicvault.publisher.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "publishers")
-class Publisher {
+public class Publisher {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ class Publisher {
 
   protected Publisher() {}
 
-  Publisher(String name, String country) {
+  public Publisher(String name, String country) {
     this.name = name;
     this.country = country;
   }
@@ -39,23 +39,23 @@ class Publisher {
     createdAt = Instant.now();
   }
 
-  Long getId() {
+  public Long getId() {
     return id;
   }
 
-  String getName() {
+  public String getName() {
     return name;
   }
 
-  void setName(String name) {
+  public void setName(String name) {
     this.name = name;
   }
 
-  String getCountry() {
+  public String getCountry() {
     return country;
   }
 
-  void setCountry(String country) {
+  public void setCountry(String country) {
     this.country = country;
   }
 

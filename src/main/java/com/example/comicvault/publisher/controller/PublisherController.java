@@ -1,8 +1,9 @@
-package com.example.comicvault.publisher;
+package com.example.comicvault.publisher.controller;
 
 import com.example.comicvault.publisher.dto.CreatePublisherRequest;
 import com.example.comicvault.publisher.dto.PublisherResponse;
 import com.example.comicvault.publisher.dto.UpdatePublisherRequest;
+import com.example.comicvault.publisher.service.PublisherService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.data.domain.Pageable;

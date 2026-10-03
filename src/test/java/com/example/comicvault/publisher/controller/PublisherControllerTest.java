@@ -1,4 +1,4 @@
-package com.example.comicvault.publisher;
+package com.example.comicvault.publisher.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +18,7 @@ import com.example.comicvault.common.error.NotFoundException;
 import com.example.comicvault.publisher.dto.CreatePublisherRequest;
 import com.example.comicvault.publisher.dto.PublisherResponse;
 import com.example.comicvault.publisher.dto.UpdatePublisherRequest;
+import com.example.comicvault.publisher.service.PublisherService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
