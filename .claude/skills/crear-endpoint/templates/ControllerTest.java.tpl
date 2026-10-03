@@ -1,10 +1,11 @@
-package com.example.comicvault.__recurso__;
+package com.example.comicvault.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.comicvault.common.error.NotFoundException;
+import com.example.comicvault.service.__Recurso__Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

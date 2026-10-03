@@ -1,7 +1,8 @@
-package com.example.comicvault.__recurso__;
+package com.example.comicvault.controller;
 
-import com.example.comicvault.__recurso__.dto.Create__Recurso__Request;
-import com.example.comicvault.__recurso__.dto.__Recurso__Response;
+import com.example.comicvault.dto.Create__Recurso__Request;
+import com.example.comicvault.dto.__Recurso__Response;
+import com.example.comicvault.service.__Recurso__Service;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.data.domain.Page;
