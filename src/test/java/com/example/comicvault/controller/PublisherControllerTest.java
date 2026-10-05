@@ -181,4 +181,17 @@ class PublisherControllerTest {
 
     mockMvc.perform(delete("/api/v1/publishers/99")).andExpect(status().isNotFound());
   }
+
+  @Test
+  void devuelve409AlBorrarUnaEditorialConSeries() throws Exception {
+    doThrow(new ConflictException("No se puede borrar la editorial 1 porque tiene series"))
+        .when(service)
+        .delete(1L);
+
+    mockMvc
+        .perform(delete("/api/v1/publishers/1"))
+        .andExpect(status().isConflict())
+        .andExpect(
+            jsonPath("$.detail").value("No se puede borrar la editorial 1 porque tiene series"));
+  }
 }

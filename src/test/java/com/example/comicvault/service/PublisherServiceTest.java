@@ -15,6 +15,7 @@ import com.example.comicvault.dto.PublisherResponse;
 import com.example.comicvault.dto.UpdatePublisherRequest;
 import com.example.comicvault.entity.Publisher;
 import com.example.comicvault.repository.PublisherRepository;
+import com.example.comicvault.repository.SeriesRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class PublisherServiceTest {
 
   @Mock PublisherRepository repository;
+  @Mock SeriesRepository seriesRepository;
 
   @InjectMocks PublisherService service;
 
@@ -112,6 +114,26 @@ class PublisherServiceTest {
     service.delete(1L);
 
     verify(repository).delete(publisher);
+    verify(repository).flush();
+  }
+
+  @Test
+  void lanzaConflictoAlBorrarUnaEditorialConSeries() {
+    given(repository.findById(1L)).willReturn(Optional.of(existing(1L, "Norma", "España")));
+    given(seriesRepository.existsByPublisherId(1L)).willReturn(true);
+
+    assertThatThrownBy(() -> service.delete(1L))
+        .isInstanceOf(ConflictException.class)
+        .hasMessageContaining("tiene series");
+    verify(repository, never()).delete(any());
+  }
+
+  @Test
+  void traduceLaViolacionDeLaClaveForaneaAConflictoAlBorrar() {
+    given(repository.findById(1L)).willReturn(Optional.of(existing(1L, "Norma", "España")));
+    willThrow(new DataIntegrityViolationException("fk_series_publisher")).given(repository).flush();
+
+    assertThatThrownBy(() -> service.delete(1L)).isInstanceOf(ConflictException.class);
   }
 
   @Test

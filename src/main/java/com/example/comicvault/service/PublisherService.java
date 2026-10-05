@@ -7,6 +7,7 @@ import com.example.comicvault.dto.PublisherResponse;
 import com.example.comicvault.dto.UpdatePublisherRequest;
 import com.example.comicvault.entity.Publisher;
 import com.example.comicvault.repository.PublisherRepository;
+import com.example.comicvault.repository.SeriesRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,11 @@ public class PublisherService {
   private static final String RESOURCE = "Editorial";
 
   private final PublisherRepository repository;
+  private final SeriesRepository seriesRepository;
 
-  public PublisherService(PublisherRepository repository) {
+  public PublisherService(PublisherRepository repository, SeriesRepository seriesRepository) {
     this.repository = repository;
+    this.seriesRepository = seriesRepository;
   }
 
   @Transactional(readOnly = true)
@@ -65,7 +68,17 @@ public class PublisherService {
 
   @Transactional
   public void delete(Long id) {
-    repository.delete(find(id));
+    Publisher publisher = find(id);
+    if (seriesRepository.existsByPublisherId(id)) {
+      throw hasSeries(id);
+    }
+    try {
+      repository.delete(publisher);
+      repository.flush();
+    } catch (DataIntegrityViolationException ex) {
+      // Una serie puede crearse entre la comprobación y el borrado; la clave foránea decide.
+      throw hasSeries(id);
+    }
   }
 
   private Publisher find(Long id) {
@@ -74,6 +87,11 @@ public class PublisherService {
 
   private ConflictException nameInUse(String name) {
     return new ConflictException("Ya existe una editorial con el nombre '%s'".formatted(name));
+  }
+
+  private ConflictException hasSeries(Long id) {
+    return new ConflictException(
+        "No se puede borrar la editorial %d porque tiene series".formatted(id));
   }
 
   private PublisherResponse toResponse(Publisher publisher) {
