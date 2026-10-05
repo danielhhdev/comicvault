@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.core.PropertyReferenceException;
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @WebMvcTest(SeriesController.class)
 class SeriesControllerTest {
@@ -269,6 +272,93 @@ class SeriesControllerTest {
     willThrow(new NotFoundException("Serie", 99L)).given(service).delete(99L);
 
     mockMvc.perform(delete("/api/v1/series/99")).andExpect(status().isNotFound());
+  }
+
+  private void sendBody(MockHttpServletRequestBuilder request, String body) throws Exception {
+    mockMvc
+        .perform(request.contentType(MediaType.APPLICATION_JSON).content(body))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void devuelve400ConProblemDetailCuandoElOrdenNoEsValido() throws Exception {
+    given(service.list(any()))
+        .willThrow(
+            new PropertyReferenceException(
+                "foo", TypeInformation.of(SeriesResponse.class), List.of()));
+
+    mockMvc
+        .perform(get("/api/v1/series?sort=foo"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.detail").value("No se puede ordenar por 'foo'"))
+        .andExpect(jsonPath("$.title").value("Parámetro de ordenación no válido"));
+  }
+
+  @Test
+  void devuelve400AlParchearConTotalVolumesCero() throws Exception {
+    sendBody(patch("/api/v1/series/1"), "{\"totalVolumes\":0}");
+  }
+
+  @Test
+  void devuelve400AlParchearConTotalVolumesNegativo() throws Exception {
+    sendBody(patch("/api/v1/series/1"), "{\"totalVolumes\":-3}");
+  }
+
+  @Test
+  void devuelve400AlParchearConUnEstadoDesconocido() throws Exception {
+    sendBody(patch("/api/v1/series/1"), "{\"status\":\"FOO\"}");
+  }
+
+  @Test
+  void devuelve400AlParchearConTituloMasLargoQueElMaximo() throws Exception {
+    sendBody(patch("/api/v1/series/1"), "{\"title\":\"%s\"}".formatted("a".repeat(201)));
+  }
+
+  @Test
+  void devuelve400AlActualizarConTotalVolumesCero() throws Exception {
+    sendBody(
+        put("/api/v1/series/1"),
+        "{\"title\":\"Berserk\",\"publisherId\":1,\"status\":\"ONGOING\",\"totalVolumes\":0}");
+  }
+
+  @Test
+  void devuelve400AlActualizarSinEditorial() throws Exception {
+    sendBody(put("/api/v1/series/1"), "{\"title\":\"Berserk\",\"status\":\"ONGOING\"}");
+  }
+
+  @Test
+  void devuelve400AlActualizarConUnEstadoDesconocido() throws Exception {
+    sendBody(
+        put("/api/v1/series/1"), "{\"title\":\"Berserk\",\"publisherId\":1,\"status\":\"FOO\"}");
+  }
+
+  @Test
+  void devuelve400AlCrearConJsonMalFormado() throws Exception {
+    sendBody(post("/api/v1/series"), "{\"title\":\"Berserk\",");
+  }
+
+  @Test
+  void devuelve400AlActualizarConJsonMalFormado() throws Exception {
+    sendBody(put("/api/v1/series/1"), "no es json");
+  }
+
+  @Test
+  void devuelve400AlParchearConJsonMalFormado() throws Exception {
+    sendBody(patch("/api/v1/series/1"), "{\"title\":");
+  }
+
+  @Test
+  void devuelve400AlCrearSinCuerpo() throws Exception {
+    mockMvc
+        .perform(post("/api/v1/series").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void devuelve400CuandoElTipoDeTotalVolumesNoEsNumerico() throws Exception {
+    postBody(
+        "{\"title\":\"Berserk\",\"publisherId\":1,\"status\":\"ONGOING\",\"totalVolumes\":\"x\"}",
+        400);
   }
 
   @Test
