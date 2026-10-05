@@ -2,10 +2,13 @@ package com.example.comicvault.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,7 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.comicvault.common.error.ConflictException;
 import com.example.comicvault.common.error.NotFoundException;
 import com.example.comicvault.dto.CreateSeriesRequest;
+import com.example.comicvault.dto.PatchSeriesRequest;
 import com.example.comicvault.dto.SeriesResponse;
+import com.example.comicvault.dto.UpdateSeriesRequest;
 import com.example.comicvault.entity.SeriesStatus;
 import com.example.comicvault.service.SeriesService;
 import java.util.List;
@@ -151,6 +156,103 @@ class SeriesControllerTest {
     given(service.create(any())).willThrow(new NotFoundException("Editorial", 1L));
 
     postBody(VALID_BODY, 404);
+  }
+
+  @Test
+  void actualizaLaSerie() throws Exception {
+    given(service.update(1L, new UpdateSeriesRequest("Berserk", 1L, SeriesStatus.ONGOING, 41)))
+        .willReturn(berserk(1L));
+
+    mockMvc
+        .perform(
+            put("/api/v1/series/1").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.title").value("Berserk"));
+  }
+
+  @Test
+  void devuelve404AlActualizarUnaSerieInexistente() throws Exception {
+    given(service.update(eq(99L), any())).willThrow(new NotFoundException("Serie", 99L));
+
+    mockMvc
+        .perform(
+            put("/api/v1/series/99").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void devuelve400AlActualizarConTituloEnBlanco() throws Exception {
+    mockMvc
+        .perform(
+            put("/api/v1/series/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"\",\"publisherId\":1,\"status\":\"ONGOING\"}"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void devuelve409AlActualizarConUnTituloRepetido() throws Exception {
+    given(service.update(eq(1L), any())).willThrow(new ConflictException("Ya existe una serie"));
+
+    mockMvc
+        .perform(
+            put("/api/v1/series/1").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void parcheaLaSerie() throws Exception {
+    given(service.patch(1L, new PatchSeriesRequest(null, null, SeriesStatus.FINISHED, null)))
+        .willReturn(new SeriesResponse(1L, "Berserk", 1L, "Norma", SeriesStatus.FINISHED, 41));
+
+    mockMvc
+        .perform(
+            patch("/api/v1/series/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"FINISHED\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("FINISHED"));
+  }
+
+  @Test
+  void aceptaUnPatchVacio() throws Exception {
+    given(service.patch(1L, new PatchSeriesRequest(null, null, null, null)))
+        .willReturn(berserk(1L));
+
+    mockMvc
+        .perform(patch("/api/v1/series/1").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void devuelve400AlParchearConTituloEnBlanco() throws Exception {
+    mockMvc
+        .perform(
+            patch("/api/v1/series/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"   \"}"))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void devuelve404AlParchearUnaSerieInexistente() throws Exception {
+    given(service.patch(eq(99L), any())).willThrow(new NotFoundException("Serie", 99L));
+
+    mockMvc
+        .perform(patch("/api/v1/series/99").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void devuelve409AlParchearConUnTituloRepetido() throws Exception {
+    given(service.patch(eq(1L), any())).willThrow(new ConflictException("Ya existe una serie"));
+
+    mockMvc
+        .perform(
+            patch("/api/v1/series/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Monster\"}"))
+        .andExpect(status().isConflict());
   }
 
   @Test

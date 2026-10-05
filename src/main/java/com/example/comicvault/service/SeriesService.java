@@ -3,7 +3,9 @@ package com.example.comicvault.service;
 import com.example.comicvault.common.error.ConflictException;
 import com.example.comicvault.common.error.NotFoundException;
 import com.example.comicvault.dto.CreateSeriesRequest;
+import com.example.comicvault.dto.PatchSeriesRequest;
 import com.example.comicvault.dto.SeriesResponse;
+import com.example.comicvault.dto.UpdateSeriesRequest;
 import com.example.comicvault.entity.Publisher;
 import com.example.comicvault.entity.Series;
 import com.example.comicvault.repository.PublisherRepository;
@@ -52,6 +54,56 @@ public class SeriesService {
     } catch (DataIntegrityViolationException ex) {
       // Dos peticiones concurrentes pueden pasar la comprobación; la restricción única decide.
       throw titleInUse(request.title());
+    }
+  }
+
+  @Transactional
+  public SeriesResponse update(Long id, UpdateSeriesRequest request) {
+    Series series = find(id);
+    Publisher publisher = findPublisher(request.publisherId());
+    checkTitleFree(publisher.getId(), request.title(), id);
+    series.setPublisher(publisher);
+    series.setTitle(request.title());
+    series.setStatus(request.status());
+    series.setTotalVolumes(request.totalVolumes());
+    flush(request.title());
+    return toResponse(series);
+  }
+
+  @Transactional
+  public SeriesResponse patch(Long id, PatchSeriesRequest request) {
+    Series series = find(id);
+    Publisher publisher =
+        request.publisherId() != null
+            ? findPublisher(request.publisherId())
+            : series.getPublisher();
+    String title = request.title() != null ? request.title() : series.getTitle();
+    if (request.publisherId() != null || request.title() != null) {
+      checkTitleFree(publisher.getId(), title, id);
+    }
+    series.setPublisher(publisher);
+    series.setTitle(title);
+    if (request.status() != null) {
+      series.setStatus(request.status());
+    }
+    if (request.totalVolumes() != null) {
+      series.setTotalVolumes(request.totalVolumes());
+    }
+    flush(title);
+    return toResponse(series);
+  }
+
+  private void checkTitleFree(Long publisherId, String title, Long id) {
+    if (repository.existsByPublisherIdAndTitleKeyAndIdNot(publisherId, Series.keyOf(title), id)) {
+      throw titleInUse(title);
+    }
+  }
+
+  private void flush(String title) {
+    try {
+      repository.flush();
+    } catch (DataIntegrityViolationException ex) {
+      throw titleInUse(title);
     }
   }
 
