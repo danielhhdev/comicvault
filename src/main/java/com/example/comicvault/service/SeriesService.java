@@ -53,7 +53,7 @@ public class SeriesService {
               new Series(publisher, request.title(), request.status(), request.totalVolumes())));
     } catch (DataIntegrityViolationException ex) {
       // Dos peticiones concurrentes pueden pasar la comprobación; la restricción única decide.
-      throw titleInUse(request.title());
+      throw integrityFailure(publisher.getId(), request.title());
     }
   }
 
@@ -66,7 +66,7 @@ public class SeriesService {
     series.setTitle(request.title());
     series.setStatus(request.status());
     series.setTotalVolumes(request.totalVolumes());
-    flush(request.title());
+    flush(publisher.getId(), request.title());
     return toResponse(series);
   }
 
@@ -89,7 +89,7 @@ public class SeriesService {
     if (request.totalVolumes() != null) {
       series.setTotalVolumes(request.totalVolumes());
     }
-    flush(title);
+    flush(publisher.getId(), title);
     return toResponse(series);
   }
 
@@ -104,12 +104,22 @@ public class SeriesService {
     }
   }
 
-  private void flush(String title) {
+  private void flush(Long publisherId, String title) {
     try {
       repository.flush();
     } catch (DataIntegrityViolationException ex) {
-      throw titleInUse(title);
+      throw integrityFailure(publisherId, title);
     }
+  }
+
+  /**
+   * La violación puede ser la restricción única o la clave foránea (editorial borrada a la vez).
+   */
+  private RuntimeException integrityFailure(Long publisherId, String title) {
+    if (!publisherRepository.existsById(publisherId)) {
+      return new NotFoundException(PUBLISHER_RESOURCE, publisherId);
+    }
+    return titleInUse(title);
   }
 
   private Series find(Long id) {

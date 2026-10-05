@@ -107,12 +107,27 @@ class SeriesServiceTest {
   void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlCrear() {
     given(publisherRepository.findById(1L)).willReturn(Optional.of(publisher(1L, "Norma")));
     given(repository.existsByPublisherIdAndTitleKey(1L, "berserk")).willReturn(false);
+    given(publisherRepository.existsById(1L)).willReturn(true);
     given(repository.saveAndFlush(any(Series.class)))
         .willThrow(new DataIntegrityViolationException("uk_series_publisher_title_key"));
 
     assertThatThrownBy(
             () -> service.create(new CreateSeriesRequest("Berserk", 1L, SeriesStatus.ONGOING, 1)))
         .isInstanceOf(ConflictException.class);
+  }
+
+  @Test
+  void devuelveNotFoundSiLaEditorialDesapareceDuranteElAlta() {
+    given(publisherRepository.findById(1L)).willReturn(Optional.of(publisher(1L, "Norma")));
+    given(repository.existsByPublisherIdAndTitleKey(1L, "berserk")).willReturn(false);
+    given(publisherRepository.existsById(1L)).willReturn(false);
+    given(repository.saveAndFlush(any(Series.class)))
+        .willThrow(new DataIntegrityViolationException("fk_series_publisher"));
+
+    assertThatThrownBy(
+            () -> service.create(new CreateSeriesRequest("Berserk", 1L, SeriesStatus.ONGOING, 1)))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage("Editorial con id 1 no encontrado");
   }
 
   @Test
@@ -207,6 +222,7 @@ class SeriesServiceTest {
     given(repository.findWithPublisherById(3L))
         .willReturn(Optional.of(existing(3L, norma, "Monster")));
     given(publisherRepository.findById(1L)).willReturn(Optional.of(norma));
+    given(publisherRepository.existsById(1L)).willReturn(true);
     willThrow(new DataIntegrityViolationException("uk_series_publisher_title_key"))
         .given(repository)
         .flush();
@@ -276,6 +292,7 @@ class SeriesServiceTest {
   void traduceLaViolacionDeLaRestriccionUnicaAConflictoAlParchear() {
     given(repository.findWithPublisherById(3L))
         .willReturn(Optional.of(existing(3L, publisher(1L, "Norma"), "Monster")));
+    given(publisherRepository.existsById(1L)).willReturn(true);
     willThrow(new DataIntegrityViolationException("uk_series_publisher_title_key"))
         .given(repository)
         .flush();
