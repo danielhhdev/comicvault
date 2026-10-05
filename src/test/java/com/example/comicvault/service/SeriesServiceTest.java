@@ -293,6 +293,24 @@ class SeriesServiceTest {
   }
 
   @Test
+  void borraLaSerieExistente() {
+    Series series = existing(3L, publisher(1L, "Norma"), "Monster");
+    given(repository.findWithPublisherById(3L)).willReturn(Optional.of(series));
+
+    service.delete(3L);
+
+    verify(repository).delete(series);
+  }
+
+  @Test
+  void lanzaNotFoundAlBorrarUnaSerieInexistente() {
+    given(repository.findWithPublisherById(99L)).willReturn(Optional.empty());
+
+    assertThatThrownBy(() -> service.delete(99L)).isInstanceOf(NotFoundException.class);
+    verify(repository, never()).delete(any());
+  }
+
+  @Test
   void listaLasSeriesMapeandoLaEditorial() {
     PageRequest pageable = PageRequest.of(0, 20);
     given(repository.findAll(pageable))

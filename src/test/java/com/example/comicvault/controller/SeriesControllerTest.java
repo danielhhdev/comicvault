@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -253,6 +255,20 @@ class SeriesControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"Monster\"}"))
         .andExpect(status().isConflict());
+  }
+
+  @Test
+  void borraLaSerieYDevuelve204() throws Exception {
+    mockMvc.perform(delete("/api/v1/series/1")).andExpect(status().isNoContent());
+
+    verify(service).delete(1L);
+  }
+
+  @Test
+  void devuelve404AlBorrarUnaSerieInexistente() throws Exception {
+    willThrow(new NotFoundException("Serie", 99L)).given(service).delete(99L);
+
+    mockMvc.perform(delete("/api/v1/series/99")).andExpect(status().isNotFound());
   }
 
   @Test

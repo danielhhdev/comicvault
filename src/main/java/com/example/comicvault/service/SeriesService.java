@@ -93,6 +93,11 @@ public class SeriesService {
     return toResponse(series);
   }
 
+  @Transactional
+  public void delete(Long id) {
+    repository.delete(find(id));
+  }
+
   private void checkTitleFree(Long publisherId, String title, Long id) {
     if (repository.existsByPublisherIdAndTitleKeyAndIdNot(publisherId, Series.keyOf(title), id)) {
       throw titleInUse(title);
