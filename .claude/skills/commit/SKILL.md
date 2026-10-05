@@ -1,7 +1,6 @@
 ---
 name: commit
 description: Propone y crea un commit con Conventional Commits en español a partir de los cambios pendientes. Úsala cuando se pida hacer commit.
-disable-model-invocation: true
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*)
 ---
 

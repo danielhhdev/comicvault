@@ -1,7 +1,6 @@
 ---
 name: crear-endpoint
 description: Genera las clases de un recurso REST (DTOs, repositorio, servicio, controlador y tests) con las convenciones de ComicVault. Es un paso de implementación de nueva-feature; úsala suelta solo si piden únicamente el endpoint, sin plan ni revisión.
-disable-model-invocation: true
 ---
 
 # Crear un endpoint REST
